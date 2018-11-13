@@ -1,0 +1,6 @@
+enum-locale
+show-std-locale
+test-locale
+test-locale2
+install_manifest.txt
+
