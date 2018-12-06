@@ -28,6 +28,37 @@ void give_help( char *name )
     // TODO: More help
 }
 
+typedef struct tagLCCATS {
+    int cat;
+    const char *name;
+}LCCATS, *PLCCATS;
+
+static LCCATS lc_cats[] = {
+    { LC_ALL, "LC_ALL"},
+    { LC_COLLATE, "LC_COLLATE"},
+    { LC_CTYPE, "LC_CTYPE"},
+#ifdef LC_MESSAGES
+    { LC_MESSAGES, "LC_MESSAGES"},
+#endif
+    { LC_MONETARY, "LC_MONETARY"},
+    { LC_NUMERIC, "LC_NUMERIC"},
+    { LC_TIME, "LC_TIME"},
+
+    /* must be last */
+    { 0, 0 }
+};
+
+static const char *get_cat_name(int cat)
+{
+    PLCCATS pc = lc_cats;
+    while (pc->name) {
+        if (pc->cat == cat)
+            return pc->name;
+        pc++;
+    }
+    return "UNKNOWN";
+}
+
 int parse_args( int argc, char **argv )
 {
     int i,i2,c;
@@ -76,11 +107,17 @@ void show_env(void)
 int show_tidy_lang(void)
 {
     int iret = 0;
+    char buf[128];
     char *cp, *sl_null, *lc_all, *org_null;
+    int category = LC_ALL;
+    const char *pc = get_cat_name(category);
+    char *ph = buf;
+
+    sprintf(ph, "setlocale(%s,", pc);
 
     show_env();
 
-    org_null = setlocale(LC_ALL, NULL);
+    org_null = setlocale(category, NULL);
     cp = org_null;
     sl_null = 0;
     if (cp) {
@@ -96,50 +133,50 @@ int show_tidy_lang(void)
             sl_null = copy;
             cp = copy;
         }
-        printf("setlocale(LC_ALL, NULL) = %s\n", cp);
+        printf("%s NULL) = %s\n", ph, cp);
     }
     else {
-        printf("setlocale(LC_ALL, NULL) FAILED!\n");
+        printf("%s NULL) FAILED!\n", ph);
         iret |= 1;
     }
 
     show_env();
     /* get the 'default' user lang */
-    lc_all = setlocale(LC_ALL, "");
+    lc_all = setlocale(category, "");
     cp = lc_all;
     if (cp) {
-        printf("setlocale(LC_ALL, \"\") = %s\n", cp);
+        printf("%s \"\") = %s\n", ph, cp);
     }
     else {
-        printf("setlocale(LC_ALL, \"\") FAILED!\n");
+        printf("%s \"\") FAILED!\n", ph);
         iret |= 2;
     }
     show_env();
-    cp = setlocale(LC_ALL, NULL);
+    cp = setlocale(category, NULL);
     if (cp) {
-        printf("setlocale(LC_ALL, NULL) = %s\n", cp);
+        printf("%s NULL) = %s\n", ph, cp);
     }
     else {
-        printf("setlocale(LC_ALL, NULL) FAILED!\n");
+        printf("%s NULL) FAILED!\n", ph);
         iret |= 4;
     }
     show_env();
     /* restore original, if we got one... */
-    cp = setlocale(LC_ALL, sl_null);
+    cp = setlocale(category, sl_null);
     if (cp) {
-        printf("setlocale(LC_ALL, %s) = %s\n", 
+        printf("%s %s) = %s\n", ph, 
             sl_null ? sl_null : "<null>",
             cp);
     }
     else {
-        printf("setlocale(LC_ALL, %s) FAILED!\n",
+        printf("%s %s) FAILED!\n", ph,
             sl_null ? sl_null : "<null>" );
         iret |= 8;
     }
 
     /* what is org_null pointing to, if anything ... */
     if (org_null) {
-        printf("org.setlocale(LC_ALL, NULL) = %s\n", org_null);
+        printf("org.%s NULL) = %s\n", ph, org_null);
     }
 
     if (sl_null) {
