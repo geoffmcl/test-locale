@@ -63,11 +63,13 @@ int parse_args( int argc, char **argv )
 void show_env(void)
 {
     char *msg = getenv("LC_MESSAGES");
-    char *lng = getenv("LANGUAGES");
+    char *lng = getenv("LANGUAGE");
+    char *lang = getenv("LANG");
     getenvcnt++;
-    printf("%s:%d: getenv LC_MESSAGES=%s, LANGUAGES=%s\n", module, getenvcnt,
+    printf("%s:%d: getenv LC_MESSAGES=%s, LANGUAGE=%s, LANG=%s\n", module, getenvcnt,
         msg ? msg : "<null>",
-        lng ? lng : "<null>");
+        lng ? lng : "<null>",
+        lang ? lang : "<null>");
 }
 
 
