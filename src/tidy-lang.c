@@ -6,15 +6,19 @@
  *
 \*/
 
+#include <stdlib.h> 
 #include <stdio.h>
 #include <string.h> // for strdup(), ...
 #include <locale.h>
 #include <malloc.h>
 // other includes
 
+
+
 static const char *module = "tidy-lang";
 
 //static const char *usr_input = 0;
+static int getenvcnt = 0;
 
 void give_help( char *name )
 {
@@ -56,10 +60,23 @@ int parse_args( int argc, char **argv )
     return 0;
 }
 
+void show_env(void)
+{
+    char *msg = getenv("LC_MESSAGES");
+    char *lng = getenv("LANGUAGES");
+    getenvcnt++;
+    printf("%s:%d: getenv LC_MESSAGES=%s, LANGUAGES=%s\n", module, getenvcnt,
+        msg ? msg : "<null>",
+        lng ? lng : "<null>");
+}
+
+
 int show_tidy_lang(void)
 {
     int iret = 0;
     char *cp, *sl_null, *lc_all, *org_null;
+
+    show_env();
 
     org_null = setlocale(LC_ALL, NULL);
     cp = org_null;
@@ -83,6 +100,9 @@ int show_tidy_lang(void)
         printf("setlocale(LC_ALL, NULL) FAILED!\n");
         iret |= 1;
     }
+
+    show_env();
+    /* get the 'default' user lang */
     lc_all = setlocale(LC_ALL, "");
     cp = lc_all;
     if (cp) {
@@ -92,6 +112,7 @@ int show_tidy_lang(void)
         printf("setlocale(LC_ALL, \"\") FAILED!\n");
         iret |= 2;
     }
+    show_env();
     cp = setlocale(LC_ALL, NULL);
     if (cp) {
         printf("setlocale(LC_ALL, NULL) = %s\n", cp);
@@ -100,7 +121,7 @@ int show_tidy_lang(void)
         printf("setlocale(LC_ALL, NULL) FAILED!\n");
         iret |= 4;
     }
-
+    show_env();
     /* restore original, if we got one... */
     cp = setlocale(LC_ALL, sl_null);
     if (cp) {
@@ -113,6 +134,7 @@ int show_tidy_lang(void)
             sl_null ? sl_null : "<null>" );
         iret |= 8;
     }
+
     /* what is org_null pointing to, if anything ... */
     if (org_null) {
         printf("org.setlocale(LC_ALL, NULL) = %s\n", org_null);
@@ -122,7 +144,7 @@ int show_tidy_lang(void)
         free(sl_null);
     }
 
-
+    show_env();
     return iret;
 }
 
