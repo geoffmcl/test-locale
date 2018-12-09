@@ -11,9 +11,9 @@
 #include <iostream>
 #include <locale>
 #include <iomanip>
-#include <codecvt>
 #include <string>
 // other includes
+/* #include <codecvt> NOT REQUIRED */
 
 //static const char *module = "show-std-locale";
 

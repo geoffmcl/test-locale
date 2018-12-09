@@ -20,12 +20,13 @@
 #include <iostream>
 #include <string>
 #include <locale>
-#include <codecvt>
+// #include <codecvt>
 
 static const char *module = "test-locale";
 static const char *def_file = "temptext.txt";
 static time_t system_time = 0; // time(NULL);
 
+#if 0 // 000000000000000000000000000000000000000000000000000000000
 void prepare_file()
 {
     // UTF-8 data
@@ -53,6 +54,8 @@ void test_file_ucs2()
     for (wchar_t c; fin >> c; )
         std::cout << std::hex << std::showbase << c << '\n';
 }
+
+#endif // #if 0 // 000000000000000000000000000000000000000000000000000000000
 
 void show_current_locale()
 {
@@ -104,7 +107,7 @@ void localf(const char* pLoc)
     return;
 }
 
-
+#if 0 // 000000000000000000000000000000000000000000000000000000000
 int test_main()
 {
     prepare_file();
@@ -112,6 +115,7 @@ int test_main()
     test_file_ucs2();
     return 0;
 }
+#endif // 00000000000000000000000000000000000000000000000000000000
 
 #ifdef _MSC_VER
 /*
@@ -186,7 +190,7 @@ int main( int argc, char **argv )
     system_time = time(NULL);
     show_current_locale();
     show_locale();
-    iret = test_main();
+    // iret = test_main();
     iret |= test_setlocale();
     show_current_locale();
     return iret;
